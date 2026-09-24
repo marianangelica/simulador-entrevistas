@@ -11,7 +11,7 @@ const ROLES = [
   "Ingeniero de Datos",
   "Científico de Datos",
   "FDE / Forward Deployed Engineer",
-  "Lider técnico de proyectos",
+  "Proyecto técnico",
   "Arquitecto de Soluciones",
   "Analista de Datos",
   "Delivery Manager",
