@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Simulador de Entrevistas para Databricks | Muttdata</title>
+    <style>
+        :root {
+            --navy: #071b3a;
+            --blue: #0b5fff;
+            --blue2: #0b72d9;
+            --pale: #eef7ff;
+            --ink: #11233e;
+            --muted: #60708a;
+            --line: #d8e7f7;
+            --card: #fff
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: linear-gradient(145deg, #f8fbff, #eaf4ff 55%, #f7f9ff);
+            color: var(--ink)
+        }
+
+        header {
+            background: linear-gradient(115deg, #06172f, #0b4db7 62%, #0b72d9);
+            color: white;
+            padding: 25px 18px;
+            box-shadow: 0 8px 28px #0b4db72a
+        }
+
+        .header {
+            max-width: 1120px;
+            margin: auto
+        }
+
+        .brand {
+            font-weight: 900;
+            letter-spacing: .5px
+        }
+
+        .brand span {
+            color: #7dd3fc
+        }
+
+        h1 {
+            font-size: clamp(25px, 4vw, 39px);
+            margin: 7px 0
+        }
+
+        .subtitle {
+            max-width: 830px;
+            opacity: .9;
+            line-height: 1.5
+        }
+
+        main {
+            max-width: 1120px;
+            margin: 22px auto;
+            padding: 0 16px 50px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 9px 25px #0b4db70d;
+            margin-bottom: 18px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 800;
+            color: #294c77;
+            display: block;
+            margin-bottom: 6px
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #bfd3eb;
+            border-radius: 10px;
+            padding: 11px;
+            background: white;
+            color: var(--ink);
+            font: inherit
+        }
+
+        textarea {
+            min-height: 190px;
+            resize: vertical;
+            line-height: 1.5
+        }
+
+        button {
+            border: 0;
+            border-radius: 11px;
+            padding: 11px 15px;
+            font-weight: 800;
+            cursor: pointer;
+            font: inherit
+        }
+
+        .primary {
+            background: var(--blue);
+            color: white
+        }
+
+        .secondary {
+            background: #e7f2ff;
+            color: #074ba8
+        }
+
+        .ghost {
+            background: white;
+            color: #294c77;
+            border: 1px solid #bfd3eb
+        }
+
+        .danger {
+            background: #fff0f0;
+            color: #a11b1b
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e9f3ff;
+            color: #0b4db7;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: 800;
+            margin: 0 5px 5px 0
+        }
+
+        .progress {
+            height: 10px;
+            background: #e7edf7;
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 13px 0
+        }
+
+        .progress div {
+            height: 100%;
+            background: linear-gradient(90deg, #0b5fff, #39bdf8);
+            transition: .25s
+        }
+
+        .question {
+            font-size: 22px;
+            line-height: 1.38;
+            margin: 13px 0 16px
+        }
+
+        .small {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .stat {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fbfdff
+        }
+
+        .stat b {
+            display: block;
+            font-size: 25px;
+            margin-top: 5px
+        }
+
+        .feedback {
+            border-left: 4px solid #70b7ff;
+            background: #f4faff;
+            border-radius: 8px;
+            padding: 13px 15px;
+            line-height: 1.5
+        }
+
+        .feedback ul {
+            margin: 7px 0;
+            padding-left: 20px
+        }
+
+        .notice {
+            background: #fff8df;
+            border: 1px solid #eed58d;
+            color: #624d06;
+            border-radius: 12px;
+            padding: 12px 14px
+        }
+
+        .mic {
+            animation: pulse 1s infinite
+        }
+
+        @keyframes pulse {
+            50% {
+                box-shadow: 0 0 0 8px #0b5fff24
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        th,
+        td {
+            padding: 9px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #e8eef6
+        }
+
+        th {
+            color: #35557e
+        }
+
+        .footer {
+            text-align: center;
+            color: #66768d;
+            font-size: 12px
+        }
+
+        @media(max-width:730px) {
+
+            .grid,
+            .grid3 {
+                grid-template-columns: 1fr
+            }
+
+            .question {
+                font-size: 19px
+            }
+
+            .buttons button {
+                flex: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header">
+            <div class="brand">Mutt<span>data</span></div>
+            <h1>Simulador de Entrevistas para Databricks</h1>
+            <div class="subtitle">200 preguntas · 10 roles · Español / English · escrito o por voz · feedback local</div>
+        </div>
+    </header>
+    <main>
+        <section id="setup" class="card">
+            <h2 style="margin-top:0">Configurar entrevista</h2>
+            <div class="grid">
+                <div><label>Rol</label><select id="role"></select></div>
+                <div><label>Idioma / Language</label><select id="lang">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                    </select></div>
+                <div><label>Número de preguntas</label><select id="count">
+                        <option>5</option>
+                        <option selected>10</option>
+                        <option>15</option>
+                        <option>20</option>
+                    </select></div>
+                <div><label>Tipo</label><select id="filter">
+                        <option value="mixed">Mixta</option>
+                        <option value="experience">Experiencia real</option>
+                        <option value="theory">Teoría</option>
+                        <option value="scenario">Caso hipotético</option>
+                        <option value="hands-on">Hands-on</option>
+                    </select></div>
+            </div>
+            <div class="buttons"><button class="primary" onclick="startInterview()">Iniciar entrevista</button><button
+                    class="ghost" onclick="resumeInterview()">Reanudar sesión</button></div>
+            <p class="small">El progreso se guarda localmente en tu navegador. Ninguna respuesta se envía a un servidor.
+            </p>
+        </section>
+
+        <section id="interview" class="hidden">
+            <div class="card">
+                <div><span class="badge" id="rBadge"></span><span class="badge" id="tBadge"></span><span class="badge"
+                        id="kBadge"></span><span class="small" id="counter"></span></div>
+                <div class="progress">
+                    <div id="bar"></div>
+                </div>
+                <div class="question" id="question"></div>
+                <div class="buttons"><button class="secondary" onclick="speak()">🔊 Escuchar</button><button id="micBtn"
+                        class="secondary" onclick="toggleMic()">🎙️ Dictar respuesta</button></div>
+                <textarea id="answer" oninput="saveDraft()" placeholder="Escribe tu respuesta..."></textarea>
+                <div class="buttons"><button class="primary" onclick="analyzeAnswer()">Analizar y dar
+                        feedback</button><button class="ghost" onclick="skip()">Omitir</button><button class="danger"
+                        onclick="finish()">Finalizar</button></div>
+                <div class="small" id="voiceMsg" style="margin-top:8px"></div>
+            </div>
+            <div id="feedbackCard" class="card hidden">
+                <div class="grid3">
+                    <div class="stat"><span class="small">Puntaje orientativo</span><b id="score"></b></div>
+                    <div class="stat"><span class="small">Conceptos detectados</span><b id="hits"></b></div>
+                    <div class="stat"><span class="small">Profundidad</span><b id="depth"></b></div>
+                </div>
+                <div id="feedback" class="feedback" style="margin-top:14px"></div>
+                <div class="buttons"><button class="primary" onclick="next()">Siguiente pregunta</button></div>
+            </div>
+        </section>
+
+        <section id="summary" class="card hidden">
+            <h2 style="margin-top:0">Resumen</h2>
+            <div class="grid3">
+                <div class="stat"><span class="small">Promedio</span><b id="avg"></b></div>
+                <div class="stat"><span class="small">Respondidas</span><b id="answered"></b></div>
+                <div class="stat"><span class="small">Rol</span><b id="sumRole" style="font-size:16px"></b></div>
+            </div>
+            <div id="sumFeedback" class="feedback" style="margin-top:14px"></div>
+            <div style="overflow:auto;margin-top:15px">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tema</th>
+                            <th>Score</th>
+                            <th>Pregunta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+            <div class="buttons"><button class="primary" onclick="exportJSON()">Descargar JSON</button><button
+                    class="secondary" onclick="exportTXT()">Descargar TXT</button><button class="ghost"
+                    onclick="restart()">Nueva entrevista</button></div>
+        </section>
+
+        <section id="bank" class="card hidden">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+                <h2 style="margin:0">Banco de preguntas</h2><button class="ghost" onclick="hideBank()">Cerrar</button>
+            </div>
+            <div id="bankBody"></div>
+        </section>
+
+        <section class="card">
+            <h3 style="margin-top:0">Qué evalúa esta versión</h3>
+            <div class="grid">
+                <div><b>Cobertura técnica</b>
+                    <p class="small">Conceptos esperables según el tema.</p>
+                </div>
+                <div><b>Evidencia práctica</b>
+                    <p class="small">Decisiones, incidentes, métricas, SLAs y resultados.</p>
+                </div>
+                <div><b>Trade-offs</b>
+                    <p class="small">Por qué una opción fue elegida y qué alternativa se descartó.</p>
+                </div>
+                <div><b>Estructura</b>
+                    <p class="small">Contexto → acción/decisión → resultado.</p>
+                </div>
+            </div>
+            <div class="notice"><b>Limitación intencional:</b> para mantener costo cero, el evaluador no llama a un LLM.
+                Usa una rúbrica local y explicable; por eso el puntaje es orientativo y no debe usarse como decisión
+                definitiva.
+                Se debe descargar el resultado de la entrevista, compartir al lider y analizar con alguna herramienta IA
+                para buscar oportunidades de mejora.</div>
+        </section>
+        <div class="footer">Muttdata · Simulador de Entrevistas para Databricks · offline-first · banco editable en
+            banco_preguntas.js</div>
+    </main>
+
+    <script src="banco_preguntas.js"></script>
+    <script>
+        const TOPICS = {"AI Search": {"keywords": ["ai search", "vector", "embedding", "index", "chunk", "metadata", "retrieval", "rag"], "guidance": "Explica chunking, embeddings, índice, filtros, retrieval y evaluación."}, "AI/BI": {"keywords": ["ai/bi", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "AI/BI Dashboards": {"keywords": ["ai/bi", "dashboards", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Acceptance": {"keywords": ["acceptance", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Accessibility": {"keywords": ["accessibility", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Agents": {"keywords": ["agent", "tool", "permission", "trace", "evaluation", "mcp", "function", "human"], "guidance": "Cubre herramientas, privilegios, trazas/evaluación y límites de acción."}, "Agile": {"keywords": ["agile", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Architecture": {"keywords": ["architecture", "trade-off", "governance", "security", "cost", "sla", "recovery"], "guidance": "Explicita requisitos, trade-offs, seguridad, operación y decisiones."}, "Auto Loader": {"keywords": ["auto", "loader", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Batch Inference": {"keywords": ["batch", "inference", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Business Metrics": {"keywords": ["business", "metrics", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "CDC": {"keywords": ["cdc", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "CI/CD": {"keywords": ["ci/cd", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Case": {"keywords": ["case", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Change Management": {"keywords": ["change", "management", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Cost": {"keywords": ["cost", "usage", "serverless", "sla", "budget", "optimize"], "guidance": "Separa utilización, arquitectura, SLA y valor usando métricas."}, "DR": {"keywords": ["risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Dashboard Design": {"keywords": ["dashboard", "design", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Data Contracts": {"keywords": ["data", "contracts", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Data Modeling": {"keywords": ["data", "modeling", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Data Quality": {"keywords": ["quality", "expectation", "constraint", "quarantine", "alert", "sla"], "guidance": "Incluye reglas, severidad, cuarentena, alertas y ownership."}, "Data Sharing": {"keywords": ["data", "sharing", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Databricks Apps": {"keywords": ["databricks apps", "serverless", "oauth", "unity catalog", "app", "cost"], "guidance": "Explica identidad, recursos Databricks, serverless y costo operacional."}, "Databricks Fundamentals": {"keywords": ["databricks", "fundamentals", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Databricks SQL": {"keywords": ["sql warehouse", "query profile", "photon", "concurrency", "query", "cache"], "guidance": "Incluye warehouse, perfil de consulta, modelado, concurrencia y optimización."}, "Declarative Automation Bundles": {"keywords": ["bundle", "yaml", "ci/cd", "deploy", "validate", "target", "version control"], "guidance": "Relaciona recursos como código, validación, targets, CI/CD y promoción."}, "Delivery": {"keywords": ["delivery", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Delta Lake": {"keywords": ["delta", "acid", "merge", "optimize", "clustering", "time travel", "file"], "guidance": "Conecta la respuesta con transacciones, diseño físico, evolución y operación de tablas Delta."}, "Delta Sharing / OpenSharing": {"keywords": ["share", "sharing", "recipient", "provider", "unity catalog", "secure"], "guidance": "Cubre proveedor, share, recipient y compartición gobernada."}, "Dependencies": {"keywords": ["dependencies", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Dimensional Modeling": {"keywords": ["dimensional", "modeling", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Discovery": {"keywords": ["discovery", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Documentation": {"keywords": ["documentation", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Enablement": {"keywords": ["enablement", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Environment Strategy": {"keywords": ["environment", "strategy", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Evaluation": {"keywords": ["evaluation", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Executive Communication": {"keywords": ["executive", "communication", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Executive Reporting": {"keywords": ["executive", "reporting", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Experiment Design": {"keywords": ["experiment", "design", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Experimentation": {"keywords": ["experimentation", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Feature Engineering": {"keywords": ["feature", "leakage", "training", "inference", "point-in-time", "lineage"], "guidance": "Incluye point-in-time correctness, lineage y consistencia training-serving."}, "Feature Store": {"keywords": ["feature store", "feature table", "online", "lookup", "training set", "serving"], "guidance": "Explica tablas de features, training set, lookup online y serving."}, "GenAI": {"keywords": ["genai", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Genie": {"keywords": ["genie", "metric", "semantic", "unity catalog", "instruction", "govern"], "guidance": "Incluye semántica confiable, contexto, permisos y validación."}, "Governance": {"keywords": ["governance", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Incremental Models": {"keywords": ["incremental", "models", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Lakebase": {"keywords": ["lakebase", "postgres", "oltp", "transaction", "operational", "api"], "guidance": "Distingue OLTP operacional de analítica lakehouse y explica integración."}, "Lakeflow": {"keywords": ["lakeflow", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Lakeflow Connect": {"keywords": ["lakeflow", "connect", "connector", "incremental", "cdc", "connection", "serverless", "retry"], "guidance": "Explica fuente, conexión, incrementalidad, destino, reintentos y límites."}, "Lakeflow Jobs": {"keywords": ["job", "task", "dependency", "retry", "repair", "schedule", "branch", "for each"], "guidance": "Incluye dependencias, retries/repair, control flow, compute y monitoreo."}, "Lakeflow Pipelines": {"keywords": ["pipeline", "streaming table", "materialized view", "expectation", "quality", "cdc", "event log"], "guidance": "Diferencia datasets declarativos, dependencias, calidad, CDC y observabilidad."}, "Lakehouse Federation": {"keywords": ["federation", "foreign catalog", "connection", "pushdown", "external", "no copy"], "guidance": "Explica consulta sin movimiento, límites de performance, gobierno y cuándo ingerir."}, "Lineage": {"keywords": ["lineage", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "MLOps": {"keywords": ["mlops", "ci/cd", "registry", "feature", "serving", "monitor", "rollback"], "guidance": "Cubre promoción, reproducibilidad, despliegue, monitoreo y rollback."}, "MLflow 3": {"keywords": ["mlflow", "experiment", "run", "metric", "parameter", "artifact", "model", "trace"], "guidance": "Cubre tracking, reproducibilidad, evaluación y trazabilidad."}, "Metric Views": {"keywords": ["metric view", "measure", "dimension", "semantic", "yaml", "measure"], "guidance": "Explica medidas/dimensiones centralizadas y consistencia semántica."}, "Migration": {"keywords": ["migration", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Model Monitoring": {"keywords": ["model", "monitoring", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Model Serving": {"keywords": ["serving", "endpoint", "latency", "autoscale", "batch", "real-time", "monitor"], "guidance": "Diferencia batch/online, endpoint, latencia, escalado y observabilidad."}, "Monitoring": {"keywords": ["monitoring", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Multi-cloud": {"keywords": ["multi-cloud", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Networking": {"keywords": ["networking", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Observability": {"keywords": ["observability", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "POC": {"keywords": ["poc", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Performance": {"keywords": ["query profile", "spark ui", "shuffle", "skew", "spill", "scan", "join"], "guidance": "Parte de evidencia: perfil/plan, scans, shuffle/skew, joins y layout."}, "Planning": {"keywords": ["planning", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Project Discovery": {"keywords": ["project", "discovery", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Recovery": {"keywords": ["recovery", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Refresh": {"keywords": ["refresh", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Reliability": {"keywords": ["reliability", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Risk": {"keywords": ["risk", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "SQL": {"keywords": ["sql", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "SQL Warehouse": {"keywords": ["sql warehouse", "concurrency", "autoscale", "serverless", "latency"], "guidance": "Relaciona sizing/escalado, concurrencia, latencia y perfil de consultas."}, "Scope": {"keywords": ["scope", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Security": {"keywords": ["security", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Self-service": {"keywords": ["self-service", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Semantic Layer": {"keywords": ["semantic", "layer", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Serverless": {"keywords": ["serverless", "compute", "autoscale", "network", "dependency", "cost", "isolation"], "guidance": "Balancea operación administrada, compatibilidad, red, seguridad y costo."}, "Spark": {"keywords": ["shuffle", "partition", "skew", "broadcast", "aqe", "spill"], "guidance": "Explica causas, síntomas y acciones ante shuffle, skew, joins y spills."}, "Spark ML": {"keywords": ["spark", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Stakeholders": {"keywords": ["stakeholders", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Statistics": {"keywords": ["statistics", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Storytelling": {"keywords": ["storytelling", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Structured Streaming": {"keywords": ["structured", "streaming", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Support": {"keywords": ["support", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "System Tables": {"keywords": ["system", "billing", "lakeflow", "usage", "audit", "cost"], "guidance": "Menciona señales de uso, costo y operación consultables a nivel de cuenta."}, "Technical Debt": {"keywords": ["technical", "debt", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Testing": {"keywords": ["unit", "integration", "contract", "reconciliation", "regression", "quality"], "guidance": "Combina pruebas unitarias, integración, contratos, reconciliación y regresión."}, "Trade-offs": {"keywords": ["trade-offs", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Troubleshooting": {"keywords": ["troubleshooting", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}, "Unity Catalog": {"keywords": ["unity catalog", "catalog", "schema", "grant", "privilege", "lineage", "audit", "least privilege"], "guidance": "Incluye jerarquía, permisos, ownership, lineage/auditoría y mínimo privilegio."}, "dbt / SQL": {"keywords": ["dbt", "sql", "risk", "riesgo", "metric", "metrica", "result", "resultado"], "guidance": "Una respuesta fuerte conecta conceptos, decisiones concretas, trade-offs, operación y un resultado medible cuando aplica."}};
+        const KL = {experience: {es: "Experiencia", en: "Experience"}, theory: {es: "Teoría", en: "Theory"}, scenario: {es: "Caso", en: "Scenario"}, "hands-on": {es: "Hands-on", en: "Hands-on"}};
+        let S = {questions: [], index: 0, results: [], role: "", lang: "es", draft: ""}, rec = null, listening = false;
+        const $ = id => document.getElementById(id);
+        function esc(s) {return String(s ?? "").replace(/[&<>"']/g, m => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[m]))}
+        function norm(s) {return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}
+        function init() {ROLES.forEach(r => {let o = document.createElement("option"); o.value = o.textContent = r; $("role").appendChild(o)}); try {const c = JSON.parse(localStorage.getItem("mdi_cfg") || "{}"); if (c.role) $("role").value = c.role; if (c.lang) $("lang").value = c.lang} catch (e) { } }
+        function shuffle(a) {return [...a].sort(() => Math.random() - .5)}
+        function startInterview() {let role = $("role").value, lang = $("lang").value, n = +$("count").value, f = $("filter").value, p = BANK[role].filter(q => f === "mixed" || q.kind === f); if (p.length < n) p = [...p, ...BANK[role].filter(q => !p.includes(q))]; S = {questions: shuffle(p).slice(0, n), index: 0, results: [], role, lang, draft: "", startedAt: new Date().toISOString()}; try {localStorage.setItem("mdi_cfg", JSON.stringify({role, lang})); localStorage.setItem("mdi_state", JSON.stringify(S))} catch (e) { }; $("setup").classList.add("hidden"); $("bank").classList.add("hidden"); $("summary").classList.add("hidden"); $("interview").classList.remove("hidden"); render()}
+        function resumeInterview() {try {let s = JSON.parse(localStorage.getItem("mdi_state") || "null"); if (!s || !s.questions || s.index >= s.questions.length) {alert("No hay una sesión pendiente."); return } S = s; $("setup").classList.add("hidden"); $("summary").classList.add("hidden"); $("interview").classList.remove("hidden"); render()} catch (e) {alert("No se pudo recuperar la sesión.")} }
+        function render() {let q = S.questions[S.index]; $("rBadge").textContent = S.role; $("tBadge").textContent = q.topic; $("kBadge").textContent = KL[q.kind][S.lang]; $("counter").textContent = ` ${S.index + 1}/${S.questions.length}`; $("bar").style.width = (S.index / S.questions.length * 100) + "%"; $("question").textContent = q[S.lang]; $("answer").value = S.draft || ""; $("answer").placeholder = S.lang === "es" ? "Escribe tu respuesta..." : "Type your answer..."; $("voiceMsg").textContent = S.lang === "es" ? "Puedes escribir o usar el micrófono si tu navegador lo soporta." : "You can type or use the microphone if your browser supports it."; $("feedbackCard").classList.add("hidden")}
+        function saveDraft() {S.draft = $("answer").value; try {localStorage.setItem("mdi_state", JSON.stringify(S))} catch (e) { } }
+        function evaluate(q, a) {
+            let t = norm(a), w = t.trim().split(/\s+/).filter(Boolean), info = TOPICS[q.topic] || {keywords: [], guidance: ""}, hits = info.keywords.filter(k => t.includes(norm(k))), miss = info.keywords.filter(k => !t.includes(norm(k)));
+            const concrete = ["%", "sla", "rpo", "rto", "p95", "latency", "latencia", "cost", "costo", "incident", "incidente", "production", "produccion", "minut", "hour", "hora", "day", "dia"].some(x => t.includes(norm(x)));
+            const action = ["implement", "diseñ", "design", "migr", "optimiz", "deploy", "automat", "configur", "monitor", "valid", "test", "measure", "med"].some(x => t.includes(norm(x)));
+            const result = ["result", "resultado", "improv", "mejor", "reduc", "aument", "increase", "decrease", "kpi", "metric", "metrica"].some(x => t.includes(norm(x)));
+            const trade = ["trade", "because", "porque", "versus", "vs", "risk", "riesgo", "limit", "costo", "cost", "altern"].some(x => t.includes(norm(x)));
+            let len = w.length >= 180 ? 25 : w.length >= 110 ? 21 : w.length >= 65 ? 17 : w.length >= 35 ? 11 : w.length >= 15 ? 6 : 2, cov = Math.min(40, Math.round(hits.length / Math.max(3, info.keywords.length) * 48)), ev = (concrete ? 9 : 0) + (action ? 8 : 0) + (result ? 7 : 0) + (trade ? 6 : 0), score = Math.min(100, len + cov + ev); if (w.length < 8) score = Math.min(score, 22);
+            let strengths = []; if (hits.length) strengths.push((S.lang === "es" ? "Conceptos detectados: " : "Detected concepts: ") + hits.slice(0, 6).join(", ")); if (action) strengths.push(S.lang === "es" ? "Describe acciones o decisiones concretas." : "It describes concrete actions or decisions."); if (concrete) strengths.push(S.lang === "es" ? "Incluye señales cuantitativas u operativas." : "It includes quantitative or operational signals."); if (trade) strengths.push(S.lang === "es" ? "Reconoce trade-offs o riesgos." : "It recognizes trade-offs or risks."); if (!strengths.length) strengths.push(S.lang === "es" ? "Hay una base, pero falta evidencia técnica concreta." : "There is a starting point, but more concrete technical evidence is needed.");
+            let improve = []; if (w.length < 65) improve.push(S.lang === "es" ? "Amplía con contexto, decisión, implementación y resultado." : "Expand with context, decision, implementation, and result."); if (miss.length) improve.push((S.lang === "es" ? "Podrías cubrir: " : "Consider covering: ") + miss.slice(0, 4).join(", ")); if (!trade) improve.push(S.lang === "es" ? "Explicita alternativas y por qué elegiste una." : "Make alternatives and your choice rationale explicit."); if (!result && q.kind === "experience") improve.push(S.lang === "es" ? "Cierra con un resultado medible o aprendizaje verificable." : "Close with a measurable result or verifiable learning.");
+            return {score, hits, miss, words: w.length, depth: score >= 80 ? "Alta / High" : score >= 60 ? "Media-alta / Medium-high" : score >= 40 ? "Media / Medium" : "Baja / Low", strengths, improve, guidance: info.guidance}
+        }
+        function analyzeAnswer() {let a = $("answer").value.trim(), q = S.questions[S.index]; if (!a) {alert(S.lang === "es" ? "Escribe o dicta una respuesta." : "Type or dictate an answer."); return } let e = evaluate(q, a); $("score").textContent = e.score + "/100"; $("hits").textContent = e.hits.length; $("depth").textContent = e.depth; $("feedback").innerHTML = `<b>${S.lang === "es" ? "Fortalezas" : "Strengths"}</b><ul>${e.strengths.map(x => `<li>${esc(x)}</li>`).join("")}</ul><b>${S.lang === "es" ? "Para mejorar" : "To improve"}</b><ul>${e.improve.map(x => `<li>${esc(x)}</li>`).join("")}</ul><p><b>${S.lang === "es" ? "Guía" : "Guide"}:</b> ${esc(S.lang === "es" ? e.guidance : "Cover the core concepts, concrete decisions, trade-offs, operational concerns, and measurable outcomes when applicable.")}</p>`; S.results[S.index] = {q, answer: a, ev: e, at: new Date().toISOString()}; S.draft = ""; try {localStorage.setItem("mdi_state", JSON.stringify(S))} catch (e) { }; $("feedbackCard").classList.remove("hidden"); $("bar").style.width = ((S.index + 1) / S.questions.length * 100) + "%"}
+        function next() {if (!S.results[S.index]) return; S.index++; if (S.index >= S.questions.length) {showSummary(); return } try {localStorage.setItem("mdi_state", JSON.stringify(S))} catch (e) { }; render()}
+        function skip() {S.results[S.index] = {q: S.questions[S.index], answer: "", skipped: true, ev: {score: 0, hits: [], miss: [], depth: "—"}}; S.draft = ""; next()}
+        function finish() {if (confirm(S.lang === "es" ? "¿Finalizar y ver resumen?" : "Finish and view summary?")) showSummary()}
+        function showSummary() {$("interview").classList.add("hidden"); $("summary").classList.remove("hidden"); let d = S.results.filter(Boolean), sc = d.filter(x => !x.skipped), avg = sc.length ? Math.round(sc.reduce((a, x) => a + x.ev.score, 0) / sc.length) : 0; $("avg").textContent = avg + "/100"; $("answered").textContent = `${sc.length}/${S.questions.length}`; $("sumRole").textContent = S.role; let bt = {}; sc.forEach(x => (bt[x.q.topic] ??= []).push(x.ev.score)); let av = Object.entries(bt).map(([t, a]) => [t, Math.round(a.reduce((x, y) => x + y, 0) / a.length)]).sort((a, b) => a[1] - b[1]), weak = av.slice(0, 3).map(x => `${x[0]} (${x[1]})`).join(", ") || "—", strong = [...av].sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => `${x[0]} (${x[1]})`).join(", ") || "—"; $("sumFeedback").innerHTML = S.lang === "es" ? `<b>Fortalezas relativas:</b> ${esc(strong)}<br><b>Prioridad de práctica:</b> ${esc(weak)}<br><span class="small">Puntaje orientativo basado en rúbricas locales.</span>` : `<b>Relative strengths:</b> ${esc(strong)}<br><b>Practice priority:</b> ${esc(weak)}<br><span class="small">Directional score based on local rubrics.</span>`; $("rows").innerHTML = d.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.q.topic)}</td><td>${x.skipped ? "—" : x.ev.score}</td><td>${esc(x.q[S.lang])}</td></tr>`).join(""); S.finishedAt = new Date().toISOString(); try {localStorage.setItem("mdi_last", JSON.stringify(S)); localStorage.removeItem("mdi_state")} catch (e) { } }
+        function restart() {$("summary").classList.add("hidden"); $("setup").classList.remove("hidden"); scrollTo({top: 0, behavior: "smooth"})}
+        function showBank() {let r = $("role").value, l = $("lang").value; $("bankBody").innerHTML = `<h3>${esc(r)}</h3><ol>${BANK[r].map(q => `<li style="margin-bottom:12px"><b>${esc(q.topic)}</b> <span class="badge">${KL[q.kind][l]}</span><br>${esc(q[l])}</li>`).join("")}</ol>`; $("bank").classList.remove("hidden"); $("bank").scrollIntoView({behavior: "smooth"})}
+        function hideBank() {$("bank").classList.add("hidden")}
+        function speak() {if (!("speechSynthesis" in window)) {alert("Speech synthesis no disponible."); return } speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(S.questions[S.index][S.lang]); u.lang = S.lang === "es" ? "es-ES" : "en-US"; speechSynthesis.speak(u)}
+        function toggleMic() {let SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) {$("voiceMsg").textContent = S.lang === "es" ? "Reconocimiento de voz no soportado. Usa texto o prueba Chrome/Edge." : "Speech recognition is not supported. Use text or try Chrome/Edge."; return } if (listening && rec) {rec.stop(); return } rec = new SR(); rec.lang = S.lang === "es" ? "es-ES" : "en-US"; rec.continuous = true; rec.interimResults = true; let base = $("answer").value.trim(), fin = ""; rec.onstart = () => {listening = true; $("micBtn").classList.add("mic"); $("voiceMsg").textContent = S.lang === "es" ? "Escuchando… pulsa otra vez para detener." : "Listening… press again to stop."}; rec.onresult = e => {let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++) {if (e.results[i].isFinal) fin += e.results[i][0].transcript + " "; else inter += e.results[i][0].transcript} $("answer").value = [base, fin, inter].filter(Boolean).join(" "); saveDraft()}; rec.onerror = e => $("voiceMsg").textContent = (S.lang === "es" ? "Voz interrumpida: " : "Voice interrupted: ") + e.error; rec.onend = () => {listening = false; $("micBtn").classList.remove("mic")}; try {rec.start()} catch (e) { } }
+        function dl(name, text, type) {let b = new Blob([text], {type}), u = URL.createObjectURL(b), a = document.createElement("a"); a.href = u; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(u), 800)}
+        function exportJSON() {dl("muttdata_databricks_interview.json", JSON.stringify(S, null, 2), "application/json")}
+        function exportTXT() {let x = [`Muttdata - Databricks Interview Simulator`, `Role: ${S.role}`, `Language: ${S.lang}`, ""]; S.results.filter(Boolean).forEach((r, i) => x.push(`${i + 1}. [${r.q.topic}] ${r.q[S.lang]}`, `Score: ${r.skipped ? "Skipped" : r.ev.score + "/100"}`, `Answer: ${r.answer || "—"}`, "")); dl("muttdata_databricks_interview.txt", x.join("\n"), "text/plain")}
+        init();
+    </script>
+</body>
+
+</html>
